@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Lobo Siargao</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+    <header>
+        <h1>El Lobo Siargao</h1>
+        <nav>
+            <ul>
+                <li><a href="#hero">Home</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#events">Events</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <section id="hero">
+        <video autoplay loop muted>
+            <source src="ellobo.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="content">
+            <h2>Experience the Sound of Siargao</h2>
+            <p>Beats inspired by waves and island life</p>
+            <button onclick="openModal('signup')">Get Your Tickets Now</button>
+        </div>
+    </section>
+    
+    <section id="features">
+        <h2>Features</h2>
+        <div class="features">
+            <div class="feature-card">
+                <img src="dj1.jpg" alt="Live DJ Sets">
+                <h3>Live DJ Sets</h3>
+                <p>Experience electrifying DJ performances.</p>
+            </div>
+            <div class="feature-card">
+                <img src="event3.jpeg" alt="Exclusive Tracks">
+                <h3>Exclusive Tracks</h3>
+                <p>Listen to exclusive tropical house beats.</p>
+            </div>
+            <div class="feature-card">
+                <img src="event4.jpeg" alt="Island Vibes">
+                <h3>Island Vibes</h3>
+                <p>Immerse yourself in the music of Siargao.</p>
+            </div>
+        </div>
+    </section>
+    
+    <section id="events">
+        <h2>Upcoming Events</h2>
+        <p>Stay tuned for live DJ sets in Siargao!</p>
+        <div class="features">
+            <div class="feature-card">
+                <img src="evs3.jpg" alt="Mamacita">
+                <h3>Mamacita</h3>
+                <p>Experience electrifying DJ performances.</p>
+            </div>
+            <div class="feature-card">
+                <img src="evs2.jpg" alt="Funky">
+                <h3>Funky</h3>
+                <p>Listen to exclusive tropical house beats.</p>
+            </div>
+            <div class="feature-card">
+                <img src="evs1.jpg" alt="Monday Vibes">
+                <h3>Monday Vibes</h3>
+                <p>Immerse yourself in the music of Siargao.</p>
+            </div>
+        </div>
+    </section>
+    
+    <section id="contact">
+        <h2>Contact Us</h2>
+        <p>Connect with us on social media or reach out via email.</p>
+        <div class="contact-card">
+            <div class="d-flex justify-content-center gap-4 mt-3">
+                <a href="https://www.facebook.com/iaaamken" target="_blank" class="contact-icon">
+                    <img src="facebook.png" alt="Facebook">
+                </a>
+                <a href="https://www.instagram.com/iaaaaamken" target="_blank" class="contact-icon">
+                    <img src="instagram.png" alt="Instagram">
+                </a>
+                <a href="https://www.tiktok.com/@kencorditacomposo" target="_blank" class="contact-icon">
+                    <img src="tiktok.png" alt="TikTok">
+                </a>
+                <a href="mailto:cyken.composo11@gmail.com" class="contact-icon">
+                    <img src="gmail.png" alt="Gmail">
+                </a>
+                <a href="https://humblegods.github.io/Portfolio1/" target="_blank" class="contact-icon">
+                    <img src="github.png" alt="GitHub">
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sign Up Modal -->
+    <div id="signupModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 class="form-title">Create Account</h2>
+            
+            <div class="social-login">
+                <button class="social-btn facebook" onclick="socialLogin('facebook')">
+                    <i class="fab fa-facebook-f"></i> Facebook
+                </button>
+                <button class="social-btn google" onclick="socialLogin('google')">
+                    <i class="fab fa-google"></i> Google
+                </button>
+            </div>
+            
+            <div class="divider">
+                <span>OR</span>
+            </div>
+            
+            <form id="signupForm" onsubmit="handleSignup(event)">
+                <div class="form-group">
+                    <label for="signupName">Full Name</label>
+                    <input type="text" id="signupName" required placeholder="Enter your full name">
+                </div>
+                <div class="form-group">
+                    <label for="signupEmail">Email</label>
+                    <input type="email" id="signupEmail" required placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword">Password</label>
+                    <input type="password" id="signupPassword" required placeholder="Create a password">
+                </div>
+                <div class="form-group">
+                    <label for="signupConfirm">Confirm Password</label>
+                    <input type="password" id="signupConfirm" required placeholder="Confirm your password">
+                </div>
+                <button type="submit" class="form-submit">Sign Up</button>
+            </form>
+            
+            <div class="form-switch">
+                Already have an account? <a onclick="switchToLogin()">Log in</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 class="form-title">Welcome Back</h2>
+            
+            <div class="social-login">
+                <button class="social-btn facebook" onclick="socialLogin('facebook')">
+                    <i class="fab fa-facebook-f"></i> Facebook
+                </button>
+                <button class="social-btn google" onclick="socialLogin('google')">
+                    <i class="fab fa-google"></i> Google
+                </button>
+            </div>
+            
+            <div class="divider">
+                <span>OR</span>
+            </div>
+            
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" required placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required placeholder="Enter your password">
+                </div>
+                <div class="form-footer">
+                    <a href="#" onclick="forgotPassword()">Forgot password?</a>
+                </div>
+                <button type="submit" class="form-submit">Log In</button>
+            </form>
+            
+            <div class="form-switch">
+                Don't have an account? <a onclick="switchToSignup()">Sign up</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ticket Service Page (hidden by default) -->
+    <div id="ticketService" class="ticket-service" style="display: none;">
+        <button class="back-button" onclick="goBackToMain()">
+            <i class="fas fa-arrow-left"></i> Back to Main
+        </button>
+        <h1>Ticket Service</h1>
+        <div class="ticket-grid">
+            <div class="ticket-card">
+                <img src="evs3.jpg" alt="Mamacita" class="ticket-img">
+                <div class="ticket-info">
+                    <h3 class="ticket-title">Mamacita</h3>
+                    <p class="ticket-date">June 15, 2023 • 9:00 PM</p>
+                    <p class="ticket-price">₱1,500</p>
+                    <button class="ticket-buy" onclick="buyTicket('Mamacita', 'June 15, 2023 • 9:00 PM', '₱1,500', 'evs3.jpg')">
+                        Buy Ticket
+                    </button>
+                </div>
+            </div>
+            <div class="ticket-card">
+                <img src="evs2.jpg" alt="Funky" class="ticket-img">
+                <div class="ticket-info">
+                    <h3 class="ticket-title">Funky</h3>
+                    <p class="ticket-date">June 22, 2023 • 9:00 PM</p>
+                    <p class="ticket-price">₱1,200</p>
+                    <button class="ticket-buy" onclick="buyTicket('Funky', 'June 22, 2023 • 9:00 PM', '₱1,200', 'evs2.jpg')">
+                        Buy Ticket
+                    </button>
+                </div>
+            </div>
+            <div class="ticket-card">
+                <img src="evs1.jpg" alt="Monday Vibes" class="ticket-img">
+                <div class="ticket-info">
+                    <h3 class="ticket-title">Monday Vibes</h3>
+                    <p class="ticket-date">June 29, 2023 • 9:00 PM</p>
+                    <p class="ticket-price">₱1,000</p>
+                    <button class="ticket-buy" onclick="buyTicket('Monday Vibes', 'June 29, 2023 • 9:00 PM', '₱1,000', 'evs1.jpg')">
+                        Buy Ticket
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ticket Receipt Modal -->
+    <div id="ticketReceiptModal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <span class="close" onclick="closeReceipt()">&times;</span>
+            <h2 class="form-title" style="color: #ff9800; margin-bottom: 20px;">Your Ticket</h2>
+            
+            <div class="ticket-receipt">
+                <div class="ticket-header">
+                    <h3 id="receipt-event-name">Event Name</h3>
+                    <p id="receipt-event-date">Date & Time</p>
+                </div>
+                <div class="ticket-body">
+                    <div class="ticket-qr">
+                        <!-- Placeholder for QR code -->
+                        <div style="width: 150px; height: 150px; background: #eee; margin: 0 auto; display: flex; align-items: center; justify-content: center; color: #333;">
+                            <p>QR Code</p>
+                        </div>
+                    </div>
+                    <div class="ticket-details">
+                        <p><strong>Ticket ID:</strong> <span id="receipt-ticket-id">XXXX-XXXX-XXXX</span></p>
+                        <p><strong>Name:</strong> <span id="receipt-customer-name">John Doe</span></p>
+                        <p><strong>Price:</strong> <span id="receipt-ticket-price">₱1,500</span></p>
+                        <p><strong>Purchase Date:</strong> <span id="receipt-purchase-date">June 10, 2023</span></p>
+                    </div>
+                </div>
+                <div class="ticket-footer">
+                    <p>Present this ticket at the entrance</p>
+                    <p style="color: #ff9800; font-weight: bold;">El Lobo Siargao</p>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px; display: flex; justify-content: space-between;">
+                <button onclick="printTicket()" style="background: #333; margin-right: 10px;">
+                    <i class="fas fa-print"></i> Print
+                </button>
+                <button onclick="saveTicket()" style="background: #ff9800;">
+                    <i class="fas fa-download"></i> Save
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Modal functions
+        function openModal(type) {
+            if (type === 'signup') {
+                document.getElementById('signupModal').style.display = 'block';
+            } else if (type === 'login') {
+                document.getElementById('loginModal').style.display = 'block';
+            }
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('signupModal').style.display = 'none';
+            document.getElementById('loginModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function closeReceipt() {
+            document.getElementById('ticketReceiptModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function switchToLogin() {
+            document.getElementById('signupModal').style.display = 'none';
+            document.getElementById('loginModal').style.display = 'block';
+        }
+
+        function switchToSignup() {
+            document.getElementById('loginModal').style.display = 'none';
+            document.getElementById('signupModal').style.display = 'block';
+        }
+
+        // Form handling
+        function handleSignup(event) {
+            event.preventDefault();
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('signupConfirm').value;
+            
+            if (password !== confirmPassword) {
+                alert("Passwords don't match!");
+                return;
+            }
+            
+            // In a real app, you would send this data to your server
+            console.log('Signup data:', { name, email, password });
+            
+            // For demo purposes, we'll just proceed to the ticket service
+            showTicketService();
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            // In a real app, you would validate credentials with your server
+            console.log('Login data:', { email, password });
+            
+            // For demo purposes, we'll just proceed to the ticket service
+            showTicketService();
+        }
+
+        function socialLogin(provider) {
+            console.log(`Logging in with ${provider}`);
+            // In a real app, you would implement OAuth flow here
+            alert(`In a real app, this would redirect to ${provider} login`);
+            
+            // For demo purposes, we'll just proceed to the ticket service
+            showTicketService();
+        }
+
+        function forgotPassword() {
+            alert("A password reset link would be sent to your email in a real app");
+            closeModal();
+        }
+
+        function showTicketService() {
+            // Hide all sections
+            document.querySelectorAll('section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // Hide header
+            document.querySelector('header').style.display = 'none';
+            
+            // Show ticket service
+            document.getElementById('ticketService').style.display = 'block';
+            
+            // Close any open modals
+            closeModal();
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        function goBackToMain() {
+            // Show all sections
+            document.querySelectorAll('section').forEach(section => {
+                section.style.display = 'block';
+            });
+            
+            // Show header
+            document.querySelector('header').style.display = 'block';
+            
+            // Hide ticket service
+            document.getElementById('ticketService').style.display = 'none';
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        function buyTicket(eventName, eventDate, eventPrice, eventImage) {
+            // Get user name from signup form if available
+            const userName = document.getElementById('signupName') ? 
+                document.getElementById('signupName').value : 'Guest';
+            
+            // Generate a random ticket ID
+            const ticketId = 'TKT-' + Math.random().toString(36).substr(2, 8).toUpperCase();
+            
+            // Get current date
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            const purchaseDate = new Date().toLocaleDateString('en-US', options);
+            
+            // Update receipt details
+            document.getElementById('receipt-event-name').textContent = eventName;
+            document.getElementById('receipt-event-date').textContent = eventDate;
+            document.getElementById('receipt-ticket-price').textContent = eventPrice;
+            document.getElementById('receipt-ticket-id').textContent = ticketId;
+            document.getElementById('receipt-customer-name').textContent = userName;
+            document.getElementById('receipt-purchase-date').textContent = purchaseDate;
+            
+            // Show the receipt modal
+            document.getElementById('ticketReceiptModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function printTicket() {
+            alert("In a real app, this would print the ticket");
+            // You could implement actual printing functionality here
+        }
+
+        function saveTicket() {
+            alert("In a real app, this would save the ticket as PDF or image");
+            // You could implement actual save functionality here
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                closeModal();
+                closeReceipt();
+            }
+        }
+    </script>
+</body>
+</html>

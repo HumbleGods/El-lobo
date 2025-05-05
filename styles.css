@@ -196,50 +196,81 @@ form textarea {
     box-shadow: 0 0 20px  #d12405, 0 0 40px #ffe600;
     border-radius: 50%;
 }
-/* Modal Styling */
+
 .modal {
-    display: none; 
-    position: fixed; 
-    z-index: 1000; 
-    left: 0; top: 0;
-    width: 100%; height: 100%;
-    overflow: auto; 
-    background-color: rgba(0,0,0,0.5);
-  }
-  
-  .modal-content {
-    background-color: #fefefe;
-    margin: 15% auto; 
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.6);
+}
+
+.social-login {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.social-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: #fff;
+    padding: 10px 15px;
+    width: 80%;
+    border-radius: 5px;
+    font-weight: bold;
+    justify-content: center;
+    transition: background 0.3s ease;
+}
+
+.facebook-btn {
+    background-color: #3b5998;
+}
+
+.gmail-btn {
+    background-color: #db4437;
+}
+
+.social-btn img {
+    width: 20px;
+    height: 20px;
+}
+
+
+.modal-content {
+    color:#e07903;
+    background:#d12405 opacity;
+    border: 1px solid #d12405;
+    margin: 10% auto;
     padding: 20px;
-    border: 1px solid #888;
-    width: 300px;
-    text-align: center;
     border-radius: 8px;
-  }
-  
-  .close {
-    color: #aaa;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+}
+.modal input {
+    color:#ff9800;
+    border: 1px solid #d12405;
+    font-family: 'Times New Roman', Times, serif;
+}
+.modal button {
+    padding:5px;
+    width: 100px;
+    margin: auto;
+    background-color: #d12405;
+    color:#ff9800;
+    border-radius: 10px;
+}
+.close {
     float: right;
-    font-size: 24px;
+    font-size: 28px;
     font-weight: bold;
     cursor: pointer;
-  }
-  
-  #auth-form input {
-    width: 90%;
-    padding: 8px;
-    margin: 8px 0;
-  }
-  #auth-form button {
-    background-color: #333;
-    color: white;
-    padding: 10px;
-    width: 100%;
-    border: none;
-    cursor: pointer;
-    margin-top: 10px;
-  }
-  #auth-form button:hover {
-    background-color: #555;
-  }
-  
+}

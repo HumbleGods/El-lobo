@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>El Lobo Siargao</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
 
     <video id="background-video" autoplay loop muted>
@@ -18,19 +20,20 @@
                 <li><a href="#hero">Home</a></li>
                 <li><a href="#features">Events</a></li>
                 <li><a href="#contact">Contact</a></li>
-                <li><a href="#" id="openSignup">Sign Up</a></li>
-                <li><a href="#" id="openSignin">Sign In</a></li>
-                <li><a href="#" id="logoutBtn" style="display:none;">Logout</a></li>
+                <li><a href="admin-login.html">Admin LogIn</a></li>
 
             </ul>
         </nav>
-        <button class="button" onclick="scrollToSection('contact')">Book Now</button>
+        <button class="button" onclick="location.href='booking.html'">Book Now</button>
+
     </header>
 
     <section id="hero" class="section-dark">
         <h1>Welcome to El Lobo Siargao</h1>
-        <p>Nestled in the heart of Siargao, El Lobo is not just a club, but a lifestyle </br>a place where adventure meets relaxation, and community thrives in the beauty of nature. </br> Whether you're a local or a traveler, our doors are open to those seeking an unforgettable experience.</br>
-</p>
+        <p>Nestled in the heart of Siargao, El Lobo is not just a club, but a lifestyle </br>a place where adventure
+            meets relaxation, and community thrives in the beauty of nature. </br> Whether you're a local or a traveler,
+            our doors are open to those seeking an unforgettable experience.</br>
+        </p>
         <button class="button" onclick="scrollToSection('features')">Explore</button>
     </section>
 
@@ -60,63 +63,8 @@
                 </div>
             </div>
         </div>
-        <!-- Sign Up Modal -->
-        <div id="signupModal" class="modal">
-            <div class="modal-content">
-                <span class="close" id="closeSignup">&times;</span>
-                <div id="signup-container">
-                    <h2>Sign Up</h2>
-                    <form id="signup-form">
-                        <input type="text" placeholder="Full Name" required><br>
-                        <input type="email" placeholder="Email" required><br>
-                        <input type="password" placeholder="Password" required><br>
-                        <button type="submit" id="signup-btn">Create Account</button>
-                    </form>
-                    <p id="signup-success" style="display:none; color: rgb(139, 86, 6);">Sign up successful</p>
-                    <p style="text-align:center; margin: 10px 0;">or continue with</p>
-                    <div class="social-login">
-                        <a href="#" class="social-btn facebook-btn">
-                            <img src="./pictures/facebook.png" alt="Facebook Icon"> Continue with Facebook
-                        </a>
-                        <a href="#" class="social-btn gmail-btn">
-                            <img src="./pictures/gmail.png" alt="Gmail Icon"> Continue with Gmail
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-
-        <!-- Login Modal -->
-        <div id="authModal" class="modal">
-            <div class="modal-content">
-                <span class="close" id="closeLogin">&times;</span>
-
-                <div id="form-container">
-                    <h2 id="form-title">Login</h2>
-                    <form id="auth-form">
-                        <input type="text" id="username" placeholder="Username" required><br>
-                        <input type="password" id="password" placeholder="Password" required><br>
-                        <button type="submit" id="submit-btn">Login</button>
-                    </form>
-                    <p id="toggle-form">Don't have an account? <a href="#" id="switch-to-signup">Sign up</a></p>
-                    <p style="text-align:center; margin: 10px 0;">or continue with</p>
-                    <div class="social-login">
-                        <a href="#" class="social-btn facebook-btn">
-                            <img src="./pictures/facebook.png" alt="Facebook Icon"> Continue with Facebook
-                        </a>
-                        <a href="#" class="social-btn gmail-btn">
-                            <img src="./pictures/gmail.png" alt="Gmail Icon"> Continue with Gmail
-                        </a>
-                    </div>
-
-                </div>
-            </div>
-        </div>
 
 
-
-        
     </section>
 
     <div class="wave flip"></div>
@@ -152,4 +100,5 @@
 
     <script src="script.js"></script>
 </body>
+
 </html>

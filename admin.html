@@ -112,7 +112,17 @@
       color: white;
     }
 
-    .btn-danger:hover {
+    .btn-primary {
+      background: linear-gradient(135deg, #ff6b35 0%, #e74c3c 100%);
+      color: white;
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+      color: white;
+    }
+
+    .btn:hover {
       transform: translateY(-2px);
       box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
     }
@@ -137,6 +147,11 @@
 
     .section-title::before {
       content: '📊';
+      font-size: 1.5rem;
+    }
+
+    .ticket-control-title::before {
+      content: '🎫';
       font-size: 1.5rem;
     }
 
@@ -285,6 +300,64 @@
       color: #ccc;
       font-size: 0.9rem;
     }
+
+    .ticket-controls {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .ticket-input-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(26, 26, 26, 0.5);
+      padding: 10px 15px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 107, 53, 0.3);
+    }
+
+    .ticket-input-group label {
+      color: #ff6b35;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .ticket-input {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 107, 53, 0.3);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 5px;
+      width: 100px;
+      text-align: center;
+      font-size: 1rem;
+      font-weight: bold;
+    }
+
+    .ticket-input:focus {
+      outline: none;
+      border-color: #ff6b35;
+      box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.2);
+    }
+
+    .low-tickets {
+      border-left-color: #e74c3c !important;
+    }
+
+    .low-tickets .stat-number {
+      color: #e74c3c;
+    }
+
+    .sold-out {
+      border-left-color: #c0392b !important;
+    }
+
+    .sold-out .stat-number {
+      color: #c0392b;
+    }
   </style>
 </head>
 <body>
@@ -314,7 +387,27 @@
         <div class="stat-number" id="pendingBookings">0</div>
         <div class="stat-label">Pending</div>
       </div>
+      <div class="stat-card" id="ticketsCard">
+        <div class="stat-number" id="remainingTickets">0</div>
+        <div class="stat-label">Tickets Remaining</div>
+      </div>
     </div>
+
+    <section class="booking-section" style="margin-bottom: 30px;">
+      <h2 class="section-title ticket-control-title">Ticket Management</h2>
+      <div class="ticket-controls">
+        <div class="ticket-input-group">
+          <label for="totalTicketsInput">Total Tickets:</label>
+          <input type="number" id="totalTicketsInput" class="ticket-input" min="0" value="100">
+        </div>
+        <button class="btn btn-success" onclick="updateTicketLimit()">
+          💾 Update Limit
+        </button>
+        <button class="btn btn-primary" onclick="resetTickets()">
+          🔄 Reset to Full
+        </button>
+      </div>
+    </section>
 
     <div class="controls">
       <button class="btn btn-danger" id="clearBookings">
@@ -347,14 +440,125 @@
       return 'EL' + Date.now().toString().slice(-6);
     }
 
+    function getTicketSettings() {
+      const settings = localStorage.getItem('elLoboTicketSettings');
+      return settings ? JSON.parse(settings) : { totalTickets: 100, usedTickets: 0 };
+    }
+
+    function saveTicketSettings(settings) {
+      localStorage.setItem('elLoboTicketSettings', JSON.stringify(settings));
+    }
+
+    function updateTicketLimit() {
+      const newLimit = parseInt(document.getElementById('totalTicketsInput').value);
+      
+      if (isNaN(newLimit) || newLimit < 0) {
+        Swal.fire({
+          title: 'Invalid Input',
+          text: 'Please enter a valid number of tickets.',
+          icon: 'error',
+          confirmButtonColor: '#ff6b35',
+          background: '#2d2d2d',
+          color: '#ffffff'
+        });
+        return;
+      }
+
+      const bookings = JSON.parse(localStorage.getItem('elLoboBookings')) || [];
+      const usedTickets = bookings.reduce((sum, booking) => sum + parseInt(booking.guests), 0);
+
+      if (newLimit < usedTickets) {
+        Swal.fire({
+          title: 'Cannot Set Limit',
+          text: `You already have ${usedTickets} tickets booked. The limit must be at least ${usedTickets}.`,
+          icon: 'warning',
+          confirmButtonColor: '#ff6b35',
+          background: '#2d2d2d',
+          color: '#ffffff'
+        });
+        return;
+      }
+
+      const settings = { totalTickets: newLimit, usedTickets: usedTickets };
+      saveTicketSettings(settings);
+      updateStats();
+      
+      Swal.fire({
+        title: 'Updated!',
+        text: `Ticket limit set to ${newLimit}`,
+        icon: 'success',
+        confirmButtonColor: '#ff6b35',
+        background: '#2d2d2d',
+        color: '#ffffff',
+        timer: 1500,
+        showConfirmButton: false
+      });
+    }
+
+    function resetTickets() {
+      Swal.fire({
+        title: 'Reset Tickets?',
+        text: 'This will reset the ticket count to match current bookings.',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#ff6b35',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Yes, reset',
+        cancelButtonText: 'Cancel',
+        background: '#2d2d2d',
+        color: '#ffffff'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const bookings = JSON.parse(localStorage.getItem('elLoboBookings')) || [];
+          const usedTickets = bookings.reduce((sum, booking) => sum + parseInt(booking.guests), 0);
+          const totalTickets = parseInt(document.getElementById('totalTicketsInput').value) || 100;
+          
+          const settings = { totalTickets: totalTickets, usedTickets: usedTickets };
+          saveTicketSettings(settings);
+          updateStats();
+          
+          Swal.fire({
+            title: 'Reset Complete!',
+            text: 'Ticket count has been synchronized.',
+            icon: 'success',
+            confirmButtonColor: '#ff6b35',
+            background: '#2d2d2d',
+            color: '#ffffff',
+            timer: 1500,
+            showConfirmButton: false
+          });
+        }
+      });
+    }
+
     function updateStats() {
       const bookings = JSON.parse(localStorage.getItem('elLoboBookings')) || [];
       const completed = bookings.filter(b => b.completed).length;
       const pending = bookings.length - completed;
+      const usedTickets = bookings.reduce((sum, booking) => sum + parseInt(booking.guests), 0);
+      
+      const ticketSettings = getTicketSettings();
+      const remainingTickets = ticketSettings.totalTickets - usedTickets;
 
       document.getElementById('totalBookings').textContent = bookings.length;
       document.getElementById('completedBookings').textContent = completed;
       document.getElementById('pendingBookings').textContent = pending;
+      document.getElementById('remainingTickets').textContent = remainingTickets;
+      document.getElementById('totalTicketsInput').value = ticketSettings.totalTickets;
+
+      // Update ticket settings
+      ticketSettings.usedTickets = usedTickets;
+      saveTicketSettings(ticketSettings);
+
+      // Update ticket card styling based on remaining tickets
+      const ticketsCard = document.getElementById('ticketsCard');
+      ticketsCard.classList.remove('low-tickets', 'sold-out');
+      
+      if (remainingTickets <= 0) {
+        ticketsCard.classList.add('sold-out');
+      } else if (remainingTickets <= ticketSettings.totalTickets * 0.1) { // Less than 10% remaining
+        ticketsCard.classList.add('low-tickets');
+      }
     }
 
     function loadBookings() {
@@ -420,44 +624,42 @@
       loadBookings();
     }
 
-function logout() {
-  Swal.fire({
-    title: 'Logout Confirmation',
-    text: 'Are you sure you want to logout?',
-    icon: 'question',
-    showCancelButton: true,
-    confirmButtonColor: '#ff6b35',
-    cancelButtonColor: '#6c757d',
-    confirmButtonText: 'Yes, logout',
-    cancelButtonText: 'Cancel',
-    background: '#2d2d2d',
-    color: '#ffffff'
-  }).then((result) => {
-    if (result.isConfirmed) {
+    function logout() {
       Swal.fire({
-        title: 'Logged Out!',
-        text: 'You have been logged out successfully.',
-        icon: 'success',
+        title: 'Logout Confirmation',
+        text: 'Are you sure you want to logout?',
+        icon: 'question',
+        showCancelButton: true,
         confirmButtonColor: '#ff6b35',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Yes, logout',
+        cancelButtonText: 'Cancel',
         background: '#2d2d2d',
-        color: '#ffffff',
-        timer: 1500,
-        showConfirmButton: false
-      }).then(() => {
-        // Redirect to index.html after the logout success message
-        window.location.href = 'index.html';
+        color: '#ffffff'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: 'Logged Out!',
+            text: 'You have been logged out successfully.',
+            icon: 'success',
+            confirmButtonColor: '#ff6b35',
+            background: '#2d2d2d',
+            color: '#ffffff',
+            timer: 1500,
+            showConfirmButton: false
+          }).then(() => {
+            // Redirect to index.html after the logout success message
+            window.location.href = 'index.html';
+          });
+        }
       });
     }
-  });
-}
-
 
     // Create sample data if none exists (for demo purposes)
     function createSampleData() {
       const existingBookings = JSON.parse(localStorage.getItem('elLoboBookings')) || [];
       if (existingBookings.length === 0) {
- 
-        localStorage.setItem('elLoboBookings', JSON.stringify(sampleBookings));
+        // Sample data removed for production
       }
     }
 
@@ -498,7 +700,7 @@ function logout() {
     createSampleData(); // Remove this line in production
     loadBookings();
   </script>
-<script>
+  <script>
     AOS.init();
   </script>
 </body>

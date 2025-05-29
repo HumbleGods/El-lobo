@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.10.1/sweetalert2.all.min.js"></script>
   <title>El Lobo Siargao - Book Now</title>
    <style>
     * {
@@ -87,6 +88,37 @@
       font-size: 16px;
     }
 
+    .ticket-status {
+      background: rgba(255, 107, 53, 0.1);
+      border: 1px solid rgba(255, 107, 53, 0.3);
+      border-radius: 12px;
+      padding: 15px 20px;
+      margin-bottom: 30px;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .ticket-status.low-tickets {
+      background: rgba(231, 76, 60, 0.1);
+      border-color: rgba(231, 76, 60, 0.4);
+      color: #e74c3c;
+    }
+
+    .ticket-status.sold-out {
+      background: rgba(192, 57, 43, 0.2);
+      border-color: rgba(192, 57, 43, 0.5);
+      color: #c0392b;
+    }
+
+    .ticket-status-icon {
+      font-size: 20px;
+    }
+
     .form-group {
       margin-bottom: 25px;
     }
@@ -133,6 +165,30 @@
       border-color: rgba(255, 140, 0, 0.8);
     }
 
+    .guest-input-container {
+      position: relative;
+    }
+
+    .guest-warning {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: rgba(231, 76, 60, 0.1);
+      border: 1px solid rgba(231, 76, 60, 0.3);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 12px;
+      color: #e74c3c;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .guest-warning.show {
+      display: block;
+      animation: slideIn 0.3s ease;
+    }
+
     .submit-button {
       width: 100%;
       padding: 18px;
@@ -149,14 +205,20 @@
       margin-top: 20px;
     }
 
-    .submit-button:hover {
+    .submit-button:hover:not(:disabled) {
       transform: translateY(-2px);
       box-shadow: 0 15px 30px rgba(255, 69, 0, 0.4);
       background: linear-gradient(135deg, #ff6500 0%, #ff1c4c 100%);
     }
 
-    .submit-button:active {
+    .submit-button:active:not(:disabled) {
       transform: translateY(0);
+    }
+
+    .submit-button:disabled {
+      background: linear-gradient(135deg, #666 0%, #999 100%);
+      cursor: not-allowed;
+      opacity: 0.6;
     }
 
     .confirmation-message {
@@ -255,6 +317,11 @@
         <p>Reserve your perfect getaway at El Lobo Siargao</p>
       </div>
       
+      <div id="ticketStatus" class="ticket-status">
+        <span class="ticket-status-icon">🎫</span>
+        <span id="ticketStatusText">Loading ticket availability...</span>
+      </div>
+      
       <form id="bookingForm">
         <div class="form-group">
           <label for="name">Full Name</label>
@@ -279,11 +346,14 @@
           </div>
           <div class="form-group">
             <label for="guests">Number of Guests</label>
-            <input type="number" id="guests" min="1" max="1000" placeholder="1" required />
+            <div class="guest-input-container">
+              <input type="number" id="guests" min="1" max="1000" placeholder="1" required />
+              <div id="guestWarning" class="guest-warning"></div>
+            </div>
           </div>
         </div>
 
-        <button type="submit" class="submit-button">Submit Booking</button>
+        <button type="submit" class="submit-button" id="submitButton">Submit Booking</button>
       </form>
       
       <div id="confirmationMessage" class="confirmation-message"></div>
@@ -293,6 +363,79 @@
   <script>
     // Set minimum date to today
     document.getElementById('date').min = new Date().toISOString().split('T')[0];
+
+    // Get ticket settings from localStorage
+    function getTicketSettings() {
+      const settings = localStorage.getItem('elLoboTicketSettings');
+      return settings ? JSON.parse(settings) : { totalTickets: 100, usedTickets: 0 };
+    }
+
+    // Save ticket settings to localStorage
+    function saveTicketSettings(settings) {
+      localStorage.setItem('elLoboTicketSettings', JSON.stringify(settings));
+    }
+
+    // Calculate available tickets
+    function getAvailableTickets() {
+      const bookings = JSON.parse(localStorage.getItem('elLoboBookings')) || [];
+      const usedTickets = bookings.reduce((sum, booking) => sum + parseInt(booking.guests), 0);
+      const ticketSettings = getTicketSettings();
+      
+      // Update used tickets in settings
+      ticketSettings.usedTickets = usedTickets;
+      saveTicketSettings(ticketSettings);
+      
+      return ticketSettings.totalTickets - usedTickets;
+    }
+
+    // Update ticket status display
+    function updateTicketStatus() {
+      const availableTickets = getAvailableTickets();
+      const ticketSettings = getTicketSettings();
+      const statusElement = document.getElementById('ticketStatus');
+      const statusText = document.getElementById('ticketStatusText');
+      const submitButton = document.getElementById('submitButton');
+      const guestsInput = document.getElementById('guests');
+
+      // Remove existing classes
+      statusElement.classList.remove('low-tickets', 'sold-out');
+
+      if (availableTickets <= 0) {
+        statusElement.classList.add('sold-out');
+        statusText.textContent = 'SOLD OUT - No tickets available';
+        submitButton.disabled = true;
+        guestsInput.disabled = true;
+        guestsInput.max = 0;
+      } else if (availableTickets <= ticketSettings.totalTickets * 0.1) {
+        statusElement.classList.add('low-tickets');
+        statusText.textContent = `Only ${availableTickets} tickets remaining!`;
+        submitButton.disabled = false;
+        guestsInput.disabled = false;
+        guestsInput.max = availableTickets;
+      } else {
+        statusText.textContent = `${availableTickets} tickets available`;
+        submitButton.disabled = false;
+        guestsInput.disabled = false;
+        guestsInput.max = availableTickets;
+      }
+    }
+
+    // Validate guest count against available tickets
+    function validateGuestCount() {
+      const guestsInput = document.getElementById('guests');
+      const guestWarning = document.getElementById('guestWarning');
+      const requestedGuests = parseInt(guestsInput.value) || 0;
+      const availableTickets = getAvailableTickets();
+
+      if (requestedGuests > availableTickets) {
+        guestWarning.textContent = `Only ${availableTickets} tickets available. Please reduce guest count.`;
+        guestWarning.classList.add('show');
+        return false;
+      } else {
+        guestWarning.classList.remove('show');
+        return true;
+      }
+    }
 
     // Back button functionality
     function goBack() {
@@ -312,40 +455,82 @@
       const email = document.getElementById('email').value.trim();
       const phone = document.getElementById('phone').value.trim();
       const date = document.getElementById('date').value;
-      const guests = document.getElementById('guests').value;
+      const guests = parseInt(document.getElementById('guests').value);
 
-      if (name && email && phone && date && guests) {
-        const booking = {
-          name,
-          email,
-          phone,
-          date,
-          guests,
-          timestamp: new Date().toISOString()
-        };
-
-        // Save to localStorage
-        let bookings = JSON.parse(localStorage.getItem('elLoboBookings')) || [];
-        bookings.push(booking);
-        localStorage.setItem('elLoboBookings', JSON.stringify(bookings));
-
-        // Show confirmation message
-        const confirmationDiv = document.getElementById('confirmationMessage');
-        confirmationDiv.innerHTML = `
-          <strong>Booking Confirmed!</strong><br>
-          Thank you, ${name}! Your booking for ${guests} guest(s) on ${new Date(date).toLocaleDateString()} has been received.<br>
-          We'll contact you at ${email} or ${phone} shortly.
-        `;
-        confirmationDiv.classList.add('show');
-
-        // Reset form
-        document.getElementById('bookingForm').reset();
-        
-        // Hide confirmation after 10 seconds
-        setTimeout(() => {
-          confirmationDiv.classList.remove('show');
-        }, 10000);
+      // Validate all fields
+      if (!name || !email || !phone || !date || !guests) {
+        Swal.fire({
+          title: 'Missing Information',
+          text: 'Please fill in all required fields.',
+          icon: 'warning',
+          confirmButtonColor: '#ff6b35',
+          background: '#2d2d2d',
+          color: '#ffffff'
+        });
+        return;
       }
+
+      // Validate guest count
+      if (!validateGuestCount()) {
+        Swal.fire({
+          title: 'Insufficient Tickets',
+          text: `Sorry, we only have ${getAvailableTickets()} tickets available.`,
+          icon: 'error',
+          confirmButtonColor: '#ff6b35',
+          background: '#2d2d2d',
+          color: '#ffffff'
+        });
+        return;
+      }
+
+      // Check if enough tickets are available
+      const availableTickets = getAvailableTickets();
+      if (guests > availableTickets) {
+        Swal.fire({
+          title: 'Not Enough Tickets',
+          text: `Sorry, we only have ${availableTickets} tickets available.`,
+          icon: 'error',
+          confirmButtonColor: '#ff6b35',
+          background: '#2d2d2d',
+          color: '#ffffff'
+        });
+        return;
+      }
+
+      const booking = {
+        name,
+        email,
+        phone,
+        date,
+        guests,
+        completed: false,
+        timestamp: new Date().toISOString()
+      };
+
+      // Save to localStorage
+      let bookings = JSON.parse(localStorage.getItem('elLoboBookings')) || [];
+      bookings.push(booking);
+      localStorage.setItem('elLoboBookings', JSON.stringify(bookings));
+
+      // Show success message with SweetAlert2
+      Swal.fire({
+        title: 'Booking Confirmed!',
+        html: `
+          <p><strong>Thank you, ${name}!</strong></p>
+          <p>Your booking for <strong>${guests}</strong> guest(s) on <strong>${new Date(date).toLocaleDateString()}</strong> has been confirmed.</p>
+          <p>We'll contact you at <strong>${email}</strong> or <strong>${phone}</strong> shortly.</p>
+          <p style="margin-top: 15px; color: #ff6b35;"><strong>Tickets remaining: ${availableTickets - guests}</strong></p>
+        `,
+        icon: 'success',
+        confirmButtonColor: '#ff6b35',
+        background: '#2d2d2d',
+        color: '#ffffff',
+        confirmButtonText: 'Great!'
+      });
+
+      // Reset form and update ticket status
+      document.getElementById('bookingForm').reset();
+      updateTicketStatus();
     });
 
     // Phone number formatting (basic)
@@ -357,6 +542,22 @@
         value = '+63' + value;
       }
       e.target.value = value;
+    });
+
+    // Add event listener for guest count validation
+    document.getElementById('guests').addEventListener('input', validateGuestCount);
+    document.getElementById('guests').addEventListener('blur', validateGuestCount);
+
+    // Initialize ticket status on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      updateTicketStatus();
+    });
+
+    // Update ticket status when page becomes visible (handles browser tab switching)
+    document.addEventListener('visibilitychange', function() {
+      if (!document.hidden) {
+        updateTicketStatus();
+      }
     });
   </script>
 <script>
